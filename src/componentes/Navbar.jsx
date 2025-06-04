@@ -15,8 +15,8 @@ function MiNavbar() {
   const location = useLocation(); // Obtiene la ruta actual
 
   // Imágenes de logo según estado de sesión
-  const logoInicio = "../../public/tuhogar.png";
-  const logoSesionIniciada = "../../public/tuhogar.png";
+  const logoInicio = "./public/tuhogar.png";
+  const logoSesionIniciada = "./public/tuhogar.png";
 
   // Determina si el usuario actual es un administrador
   // a traves del rol 
@@ -94,7 +94,7 @@ function MiNavbar() {
                   <NavDropdown.Item
                     onClick={() => setCategoryFilter("Shoes")}
                   >
-                    Calsado
+                    Calzado
                   </NavDropdown.Item>
                   <NavDropdown.Item
                     onClick={() => setCategoryFilter("Car")}

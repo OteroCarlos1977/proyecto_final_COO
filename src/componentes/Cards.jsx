@@ -38,7 +38,7 @@ function Cards() {
     // Filtrar por categoría si se seleccionó alguna
     if (categoryFilter) {
       resultadosFiltrados = resultadosFiltrados.filter(
-        (producto) => producto.material === categoryFilter
+        (producto) => producto.producto === categoryFilter
       );
     }
 
