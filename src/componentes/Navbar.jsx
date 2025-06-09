@@ -92,26 +92,21 @@ function MiNavbar() {
                     Todos
                   </NavDropdown.Item>
                   <NavDropdown.Item
-                    onClick={() => setCategoryFilter("Shoes")}
+                    onClick={() => setCategoryFilter("sillas")}
                   >
-                    Calzado
+                    Sillas
                   </NavDropdown.Item>
                   <NavDropdown.Item
-                    onClick={() => setCategoryFilter("Car")}
+                    onClick={() => setCategoryFilter("sillones")}
                   >
-                    Automóvil
+                    Sillones
                   </NavDropdown.Item>
                   <NavDropdown.Item
-                    onClick={() => setCategoryFilter("Sausages")}
+                    onClick={() => setCategoryFilter("textiles")}
                   >
-                    Embutidos
+                    Textiles
                   </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => setCategoryFilter("Pants")}>
-                    Pantalones
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => setCategoryFilter("Towels")}>
-                    Toallas
-                  </NavDropdown.Item>
+                  
                 </NavDropdown>
               )}
             </Nav>

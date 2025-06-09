@@ -16,8 +16,8 @@ function DetalleProducto() {
   const navigate = useNavigate();
 
   // Hook personalizado que obtiene el producto desde la API usando el ID
-  const { product, loading, error } = useFetchProductById(
-    "https://68100c3d27f2fdac24101ab5.mockapi.io/",
+  const { producto, loading, error } = useFetchProductById(
+    "https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos",
     id
   );
 
@@ -42,7 +42,7 @@ function DetalleProducto() {
   }
 
   // Si no se encontró el producto con el ID proporcionado
-  if (!product) {
+  if (!producto) {
     return (
       <Container className="mt-5">
         <Alert variant="warning">No se encontró el producto</Alert>
@@ -55,12 +55,12 @@ function DetalleProducto() {
   return (
     <Container className="m-4">
       {/* Título del producto */}
-      <h2>{product.producto}</h2>
+      <h2>{producto.producto}</h2>
 
       {/* Imagen del producto con estilo para que se vea bien */}
       <img
-        src={product.image}
-        alt={product.title}
+        src={producto.imagen}
+        alt={producto.producto}
         style={{
           width: "100%",
           maxHeight: "300px",
@@ -71,24 +71,20 @@ function DetalleProducto() {
 
       {/* Precio del producto */}
       <p>
-        <strong>Precio:</strong> ${product.price}
+        <strong>Precio:</strong> ${producto.precio}
       </p>
 
       {/* Categoría a la que pertenece el producto */}
       <p>
-        <strong>Producto:</strong> {product.producto}
+        <strong>Producto:</strong> {producto.producto}
       </p>
 
       {/* Descripción detallada del producto */}
       <p>
-        <strong>Descripción:</strong> {product.description}
+        <strong>Descripción:</strong> {producto.descripcion}
       </p>
 
-      {/* Información del rating del producto (si está disponible) */}
-      <p>
-        <strong>Material:</strong> {product.material} 
-      </p>
-
+      
       {/* Botón para volver a la página principal */}
       <Button
         className="mt-2 align-self-center w-20"

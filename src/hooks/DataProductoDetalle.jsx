@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 // Custom hook para obtener un producto por ID desde una URL base
 function useFetchProductById(baseUrl, id) {
   // Estado para almacenar el producto
-  const [product, setProduct] = useState(null);
+  const [producto, setProducto] = useState(null);
   // Estado para indicar si está cargando
   const [loading, setLoading] = useState(true);
   // Estado para almacenar posibles errores
@@ -30,7 +30,7 @@ function useFetchProductById(baseUrl, id) {
 
         // Convierte la respuesta a JSON y la guarda en el estado
         const jsonData = await response.json();
-        setProduct(jsonData);
+        setProducto(jsonData);
       } catch (err) {
         // Si ocurre un error, lo guarda en el estado de error
         setError(err.message);
@@ -46,7 +46,7 @@ function useFetchProductById(baseUrl, id) {
   }, [baseUrl, id]); // Se vuelve a ejecutar si cambia baseUrl o id
 
   // Devuelve el producto, el estado de carga y posibles errores
-  return { product, loading, error };
+  return { producto, loading, error };
 }
 
 

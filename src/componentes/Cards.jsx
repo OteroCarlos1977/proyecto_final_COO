@@ -19,7 +19,7 @@ function Cards() {
 
   // Hook personalizado que obtiene los productos desde la API 
   const { data, loading, error } = DataProductos(
-    "https://68100c3d27f2fdac24101ab5.mockapi.io/type"
+    "https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos"
   );
 
   // Estado local que almacena los productos ya filtrados
@@ -38,7 +38,7 @@ function Cards() {
     // Filtrar por categoría si se seleccionó alguna
     if (categoryFilter) {
       resultadosFiltrados = resultadosFiltrados.filter(
-        (producto) => producto.producto === categoryFilter
+        (producto) => producto.categoria === categoryFilter
       );
     }
 
@@ -49,10 +49,10 @@ function Cards() {
         (producto) =>
           (producto.producto &&
             producto.producto.toLowerCase().includes(textoBusqueda)) ||
-          (producto.description &&
-            producto.description.toLowerCase().includes(textoBusqueda)) ||
-          (producto.material &&
-            producto.material.toLowerCase().includes(textoBusqueda))
+          (producto.descripcion &&
+            producto.descripcion.toLowerCase().includes(textoBusqueda)) ||
+          (producto.categoria &&
+            producto.categoria.toLowerCase().includes(textoBusqueda))
       );
     }
 
@@ -148,7 +148,7 @@ function Cards() {
                 >
                   <Card.Img
                     variant="top"
-                    src={producto.image}
+                    src={producto.imagen}
                     alt={producto.producto}
                     title= "Ver Detalle" 
                     style={{
@@ -159,6 +159,7 @@ function Cards() {
                     }}
                     onClick={() => navigate(`/producto/${producto.id}`)}
                   />
+                  
                 </div>
 
                 {/* Cuerpo de la tarjeta con descripción, precio y botón */}
@@ -177,7 +178,7 @@ function Cards() {
                   </Card.Text>*/}
                   <Card.Text className="mt-auto pt-2">
                     <strong>Precio:</strong> $
-                    {(parseFloat(producto.price) * 100).toFixed(2)}{" "}
+                    {producto.precio}{" "}
                     {/* Se multiplica para simular moneda local */}
                   </Card.Text>
 
