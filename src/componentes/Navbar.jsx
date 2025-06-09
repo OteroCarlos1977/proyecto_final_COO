@@ -15,8 +15,8 @@ function MiNavbar() {
   const location = useLocation(); // Obtiene la ruta actual
 
   // Imágenes de logo según estado de sesión
-  const logoInicio = "./public/tuhogar.png";
-  const logoSesionIniciada = "./public/tuhogar.png";
+  const logoInicio = "/imagenes/tuhogar.png";
+  const logoSesionIniciada = "/imagenes/tuhogar.png";
 
   // Determina si el usuario actual es un administrador
   // a traves del rol 
