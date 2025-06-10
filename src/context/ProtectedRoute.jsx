@@ -5,8 +5,9 @@ import { useAuth } from "../context/AuthContext";
 
 // Componente para proteger rutas según el rol del usuario
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-    const { usuario, esAdministrador } = useAuth(); // Obtiene el usuario actual y si es admin
+    const { usuario, esAdministrador, cargandoUsuario } = useAuth(); // Obtiene el usuario actual y si es admin
 
+    if (cargandoUsuario) return null;
     // Si el usuario no está autenticado, redirige a la página de login
     if (!usuario) {
         return <Navigate to="/login" replace />;

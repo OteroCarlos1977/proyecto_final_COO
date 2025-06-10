@@ -1,24 +1,27 @@
 import { useState } from "react";
 import { Container, Table, Spinner, Alert, Image } from "react-bootstrap";
-import { useAuth } from "../context/AuthContext"; // Hook personalizado para obtener el usuario autenticado
-import DataProductos from "../hooks/DataProductos"; // Hook personalizado para obtener los datos de productos
-import Button from "../componentes/Button"; // Componente de botón reutilizable
-import { FaTrash, FaEdit, FaPlus } from "react-icons/fa"; // Iconos de edición y eliminación
+import { useAuth } from "../context/AuthContext"; // Hook de autenticación
+import DataProductos from "../hooks/DataProductos"; // Hook para obtener productos
+import Button from "../componentes/Button"; // Botón reutilizable
+import { FaTrash, FaEdit, FaPlus } from "react-icons/fa"; // Iconos
 import FormularioProducto from "../componentes/FormularioProducto";
 
-function Administrador() {
-  // Obtener el usuario autenticado desde el contexto
-  const { usuario } = useAuth();
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [actualizar, setActualizar] = useState(false);
+// Importa SweetAlert2
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-  // Obtener datos de productos desde la API usando el hook personalizado
+const MySwal = withReactContent(Swal);
+
+function Administrador() {
+  const { usuario } = useAuth(); // Usuario autenticado
+  const [mostrarFormulario, setMostrarFormulario] = useState(false); // Control modal
+  const [actualizar, setActualizar] = useState(false); // Trigger para recargar productos
+
   const { data, loading, error } = DataProductos(
     "https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos",
     actualizar
   );
 
-  // Función manejadora para la acción de editar un producto
   const handleAgregarProducto = () => {
     setMostrarFormulario(true);
   };
@@ -27,67 +30,100 @@ function Administrador() {
     setMostrarFormulario(false);
   };
 
+  // Al agregar un producto, recarga la tabla y muestra alerta
   const handleProductoAgregado = () => {
-    setActualizar(!actualizar); 
+    setActualizar(!actualizar);
+    MySwal.fire({
+      icon: "success",
+      title: "Producto agregado",
+      text: "El nuevo producto fue guardado correctamente.",
+      timer: 2000,
+      showConfirmButton: false,
+    });
   };
 
-  // Función manejadora para la acción de editar un producto
+  // Función para editar (pendiente de implementar)
   const handleEditarProducto = (id) => {
     console.log(`Función de editar producto con ID: ${id}`);
-    // Aquí se integraría la lógica para editar el producto
   };
 
-  // Función manejadora para la acción de eliminar un producto
-  const handleEliminarProducto = (id) => {
-    console.log(`Función de eliminar producto con ID: ${id}`);
-    // Aquí se integraría la lógica para eliminar el producto
+  // Elimina un producto con confirmación de SweetAlert2
+  const handleEliminarProducto = async (id) => {
+    const result = await MySwal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará el producto de forma permanente.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          `https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos/${id}`,
+          { method: "DELETE" }
+        );
+
+        if (!response.ok) {
+          throw new Error("Error al eliminar el producto");
+        }
+
+        setActualizar(!actualizar); // Recarga productos
+
+        MySwal.fire("Eliminado", "El producto fue eliminado correctamente.", "success");
+      } catch (error) {
+        MySwal.fire("Error", "No se pudo eliminar el producto. Intenta nuevamente.", "error");
+        console.error(error);
+      }
+    }
   };
 
-  // Mostrar spinner de carga mientras se obtienen los datos
+  // Cargando datos
   if (loading) {
     return (
       <Container className="text-center mt-5">
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">
-            Cargando datos de productos...
-          </span>
+          <span className="visually-hidden">Cargando datos...</span>
         </Spinner>
         <p>Cargando datos de productos para el administrador...</p>
       </Container>
     );
   }
 
-  // Mostrar alerta de error si falla la carga de datos
+  // Error al cargar datos
   if (error) {
     return (
       <Container className="mt-5">
-        <Alert variant="danger">
-          Error al cargar datos de productos: {error}
-        </Alert>
+        <Alert variant="danger">Error al cargar datos de productos: {error}</Alert>
       </Container>
     );
   }
 
-  // Render principal del panel de administrador
+  // Render principal
   return (
     <Container className="mt-5">
       <div>
+        {/* Botón para abrir el formulario de nuevo producto */}
         <Button
           Icono={FaPlus}
           texto="Nuevo"
           variant="primary"
-          onClick={() => handleAgregarProducto()}
+          onClick={handleAgregarProducto}
           className="rounded-20"
           style={{
             padding: "0.0rem",
             marginRight: "0.2rem",
-            width: "60px",
+            width: "100px",
             height: "30px",
           }}
           tooltip="Agregar"
         />
       </div>
-      {usuario ? ( // Verifica si hay un usuario autenticado
+
+      {usuario ? (
         <>
           <div className="text-center mb-4">
             <h2>Panel de Administración de Productos</h2>
@@ -133,7 +169,7 @@ function Administrador() {
                         />
                       </td>
                       <td>
-                        {/* Botón para editar el producto */}
+                        {/* Botón editar */}
                         <Button
                           Icono={FaEdit}
                           variant="success"
@@ -147,7 +183,7 @@ function Administrador() {
                           }}
                           tooltip="Editar"
                         />
-                        {/* Botón para eliminar el producto */}
+                        {/* Botón eliminar */}
                         <Button
                           Icono={FaTrash}
                           variant="danger"
@@ -168,13 +204,12 @@ function Administrador() {
           </div>
         </>
       ) : (
-        // Si no hay usuario autenticado, mostrar mensaje
         <div className="text-center">
           <p>Cargando información del administrador...</p>
-          {/* Alternativamente, aquí podrías mostrar "Acceso no autorizado" */}
         </div>
       )}
-      {/* Modal de nuevo producto */}
+
+      {/* Modal para agregar nuevo producto */}
       <FormularioProducto
         show={mostrarFormulario}
         handleClose={handleCerrarFormulario}

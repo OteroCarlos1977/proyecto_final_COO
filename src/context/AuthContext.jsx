@@ -26,6 +26,7 @@ function generarTokenSimulado() {
  */
 export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);      // Estado del usuario autenticado
+  const [cargandoUsuario, setCargandoUsuario] = useState(true); //Para la persistencia del usuario
   const navigate = useNavigate();                    // Hook para redirección de rutas
 
   /**
@@ -73,6 +74,7 @@ export const AuthProvider = ({ children }) => {
     if (usuarioGuardado) {
       setUsuario(JSON.parse(usuarioGuardado)); // Si hay, lo carga al estado
     }
+      setCargandoUsuario(false); //Verifica el usuario
   }, []);
 
   /**
@@ -83,7 +85,7 @@ export const AuthProvider = ({ children }) => {
   // Provee el contexto a los componentes hijos
   return (
     <AuthContext.Provider
-      value={{ usuario, login, logout, esAdministrador }}
+      value={{ usuario, login, logout, esAdministrador, cargandoUsuario }}
     >
       {children}
     </AuthContext.Provider>

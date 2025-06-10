@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 /*  Hook personalizado para realizar peticiones fetch a una URL.
  Retorna los datos obtenidos, el estado de carga y cualquier error.*/
-function useFetchData(url) {
+function useFetchData(url, trigger = false) {
   // Estado para almacenar los datos obtenidos
   const [data, setData] = useState(null);
   // Estado para controlar si los datos están siendo cargados
@@ -41,7 +41,7 @@ function useFetchData(url) {
 
     // Ejecuta la función de carga de datos
     fetchData();
-  }, [url]); // Se vuelve a ejecutar si cambia la URL
+  }, [url, trigger]); // Se vuelve a ejecutar si cambia la URL
 
   // Retorna un objeto con los datos, el estado de carga y cualquier error
   return { data, loading, error };
