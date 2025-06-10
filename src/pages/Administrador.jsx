@@ -1,18 +1,35 @@
-import React from "react";
+import { useState } from "react";
 import { Container, Table, Spinner, Alert, Image } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext"; // Hook personalizado para obtener el usuario autenticado
 import DataProductos from "../hooks/DataProductos"; // Hook personalizado para obtener los datos de productos
 import Button from "../componentes/Button"; // Componente de botón reutilizable
-import { FaTrash, FaEdit } from "react-icons/fa"; // Iconos de edición y eliminación
+import { FaTrash, FaEdit, FaPlus } from "react-icons/fa"; // Iconos de edición y eliminación
+import FormularioProducto from "../componentes/FormularioProducto";
 
 function Administrador() {
   // Obtener el usuario autenticado desde el contexto
   const { usuario } = useAuth();
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [actualizar, setActualizar] = useState(false);
 
   // Obtener datos de productos desde la API usando el hook personalizado
   const { data, loading, error } = DataProductos(
-    "https://fakestoreapi.com/products"
+    "https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos",
+    actualizar
   );
+
+  // Función manejadora para la acción de editar un producto
+  const handleAgregarProducto = () => {
+    setMostrarFormulario(true);
+  };
+
+  const handleCerrarFormulario = () => {
+    setMostrarFormulario(false);
+  };
+
+  const handleProductoAgregado = () => {
+    setActualizar(!actualizar); 
+  };
 
   // Función manejadora para la acción de editar un producto
   const handleEditarProducto = (id) => {
@@ -54,6 +71,22 @@ function Administrador() {
   // Render principal del panel de administrador
   return (
     <Container className="mt-5">
+      <div>
+        <Button
+          Icono={FaPlus}
+          texto="Nuevo"
+          variant="primary"
+          onClick={() => handleAgregarProducto()}
+          className="rounded-20"
+          style={{
+            padding: "0.0rem",
+            marginRight: "0.2rem",
+            width: "60px",
+            height: "30px",
+          }}
+          tooltip="Agregar"
+        />
+      </div>
       {usuario ? ( // Verifica si hay un usuario autenticado
         <>
           <div className="text-center mb-4">
@@ -67,8 +100,6 @@ function Administrador() {
                   <th>Descripción</th>
                   <th>Categoría</th>
                   <th>Imagen</th>
-                  <th>Valoracion</th>
-                  <th>Cantidad</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -77,8 +108,8 @@ function Administrador() {
                   data.map((producto) => (
                     <tr key={producto.id}>
                       <td>{producto.id}</td>
-                      <td>{producto.title}</td>
-                      <td>${producto.price}</td>
+                      <td>{producto.producto}</td>
+                      <td>${producto.precio}</td>
                       <td
                         style={{
                           maxWidth: "200px",
@@ -87,13 +118,13 @@ function Administrador() {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {producto.description}
+                        {producto.descripcion}
                       </td>
-                      <td>{producto.category}</td>
+                      <td>{producto.categoria}</td>
                       <td>
                         <Image
-                          src={producto.image}
-                          alt={producto.title}
+                          src={producto.imagen}
+                          alt={producto.producto}
                           style={{
                             width: "50px",
                             height: "50px",
@@ -101,8 +132,6 @@ function Administrador() {
                           }}
                         />
                       </td>
-                      <td>{producto.rating.rate}</td>
-                      <td>{producto.rating.count}</td>
                       <td>
                         {/* Botón para editar el producto */}
                         <Button
@@ -145,6 +174,12 @@ function Administrador() {
           {/* Alternativamente, aquí podrías mostrar "Acceso no autorizado" */}
         </div>
       )}
+      {/* Modal de nuevo producto */}
+      <FormularioProducto
+        show={mostrarFormulario}
+        handleClose={handleCerrarFormulario}
+        onProductoAgregado={handleProductoAgregado}
+      />
     </Container>
   );
 }

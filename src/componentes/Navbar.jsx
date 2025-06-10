@@ -14,9 +14,7 @@ function MiNavbar() {
   const { setCategoryFilter } = useCategoryFilter(); // Permite establecer filtro de categoría
   const location = useLocation(); // Obtiene la ruta actual
 
-  // Imágenes de logo según estado de sesión
-  const logoInicio = "/imagenes/tuhogar.png";
-  const logoSesionIniciada = "/imagenes/tuhogar.png";
+  
 
   // Determina si el usuario actual es un administrador
   // a traves del rol 
@@ -40,7 +38,7 @@ function MiNavbar() {
         <Navbar.Brand as={Link} to="/">
           <img
             alt="logo"
-            src={usuario ? logoSesionIniciada : logoInicio}
+            src="/imagenes/tuhogar.png"
             width="50"
             height="40"
             className="d-inline-block align-top"

@@ -15,7 +15,7 @@ function Carrito() {
     // Calcula el total de la compra sumando subtotales de cada producto 
     // se lo multiplica por mil para que el precio se ajuste a la realidad
     const calcularTotal = () => {
-        return carrito.reduce((total, item) => total + item.price * item.cantidad * 1000, 0).toFixed(2);
+        return carrito.reduce((total, item) => total + item.precio * item.cantidad, 0).toFixed(2);
     };
 
     // Muestra una alerta de confirmación antes de eliminar un producto del carrito
@@ -77,7 +77,7 @@ function Carrito() {
                             </Col>
                             {/* Precio unitario */}
                             <Col xs={10} md={2}>
-                                <small>Precio ${item.price * 1000}</small>
+                                <small>Precio ${(item.precio).toFixed(2)}</small>
                             </Col>
                             {/* Cantidad seleccionada */}
                             <Col xs={6} md={2} className="text-md-end mt-2 mt-md-0">
@@ -85,7 +85,7 @@ function Carrito() {
                             </Col>
                             {/* Subtotal del producto */}
                             <Col xs={6} md={2} className="text-md-end mt-2 mt-md-0">
-                                <span>Subtotal ${(item.price * item.cantidad * 1000).toFixed(2)}</span>
+                                <span>Subtotal ${(item.precio * item.cantidad).toFixed(2)}</span>
                             </Col>
                             {/* Botón para eliminar el producto */}
                             <Col xs={6} md={2} className="text-end mt-2 mt-md-0">
