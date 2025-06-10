@@ -116,8 +116,8 @@ function Administrador() {
           style={{
             padding: "0.0rem",
             marginRight: "0.2rem",
-            width: "100px",
-            height: "30px",
+            width: "120px",
+            height: "50px",
           }}
           tooltip="Agregar"
         />
@@ -178,8 +178,8 @@ function Administrador() {
                           style={{
                             padding: "0.0rem",
                             marginRight: "0.2rem",
-                            width: "30px",
-                            height: "30px",
+                            width: "40px",
+                            height: "40px",
                           }}
                           tooltip="Editar"
                         />
@@ -191,8 +191,8 @@ function Administrador() {
                           className="rounded-15"
                           style={{
                             padding: "0.0rem",
-                            width: "30px",
-                            height: "30px",
+                            width: "40px",
+                            height: "40px",
                           }}
                           tooltip="Eliminar"
                         />

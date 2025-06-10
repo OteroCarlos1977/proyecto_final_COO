@@ -3,17 +3,13 @@ import { Container, Form, Card } from "react-bootstrap";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useAuth } from "../context/AuthContext";
-import {
-  AiFillEye,
-  AiFillEyeInvisible,
-  AiOutlineInfoCircle,
-} from "react-icons/ai";
+import { AiFillEye, AiFillEyeInvisible, AiOutlineInfoCircle } from "react-icons/ai";
 import Button from "../componentes/Button";
 
 // Inicializa SweetAlert con soporte para componentes React
 const MySwal = withReactContent(Swal);
 
-//Alerta circunstancial para probar el ingreso
+// Alerta informativa con credenciales de prueba
 const handleInfoClick = () => {
   MySwal.fire({
     title: "Información de Acceso",
@@ -27,32 +23,25 @@ const handleInfoClick = () => {
 };
 
 function Login() {
-  // Estado para almacenar el nombre de usuario ingresado
   const [usuario, setUsuario] = useState("");
-  // Estado para almacenar la contraseña ingresada
   const [password, setPassword] = useState("");
-  // Estado para controlar la visibilidad de la contraseña (mostrar/ocultar)
   const [showPassword, setShowPassword] = useState(false);
 
-  // Hook personalizado que provee la función de login desde el contexto de autenticación
   const { login } = useAuth();
 
-  // Función que se ejecuta al enviar el formulario de login
+  // Envío del formulario
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Evita que la página se recargue
+    e.preventDefault();
 
-    // Llama a la función login con usuario y contraseña
     const result = await login(usuario, password);
 
     if (result.success) {
-      // Si login es exitoso, muestra un mensaje de bienvenida con SweetAlert
       MySwal.fire({
         title: `Bienvenido, ${result.user.nombre}`,
         icon: "success",
         confirmButtonText: "Continuar",
       });
     } else {
-      // Si falla el login, muestra un mensaje de error con SweetAlert
       MySwal.fire({
         title: "Error",
         text: result.message,
@@ -62,7 +51,7 @@ function Login() {
     }
   };
 
-  // Alterna el estado de visibilidad de la contraseña
+  // Alternar visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -71,7 +60,7 @@ function Login() {
     <Container className="mt-5" style={{ maxWidth: "400px" }}>
       <Card>
         <Card.Body>
-          {/*Se agrega info para la prueba de usario/administrador*/}
+          {/* Icono de ayuda con info de acceso */}
           <div className="d-flex justify-content-end">
             <AiOutlineInfoCircle
               size={24}
@@ -80,9 +69,11 @@ function Login() {
               onClick={handleInfoClick}
             />
           </div>
+
           <Card.Title className="mb-4 text-center">Iniciar Sesión</Card.Title>
+
           <Form onSubmit={handleSubmit}>
-            {/* Campo para ingresar el nombre de usuario */}
+            {/* Usuario */}
             <Form.Group controlId="formUsuario" className="mb-3">
               <Form.Label>Usuario</Form.Label>
               <Form.Control
@@ -93,22 +84,20 @@ function Login() {
               />
             </Form.Group>
 
-            {/* Campo para ingresar la contraseña con botón para mostrar/ocultar */}
+            {/* Contraseña con botón mostrar/ocultar */}
             <Form.Group controlId="formPassword" className="mb-3">
               <Form.Label>Contraseña</Form.Label>
               <div className="input-group">
                 <Form.Control
-                  // Cambia el tipo entre 'text' y 'password' según el estado showPassword
                   type={showPassword ? "text" : "password"}
                   placeholder="Ingrese su contraseña"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                {/* Botón para alternar visibilidad de la contraseña */}
                 <Button
                   variant="outline-secondary"
                   onClick={togglePasswordVisibility}
-                  texto="" // Sin texto, solo muestra el ícono
+                  texto=""
                   Icono={showPassword ? AiFillEyeInvisible : AiFillEye}
                   style={{
                     width: "50px",
@@ -116,11 +105,11 @@ function Login() {
                     backgroundColor: "#007bff",
                     color: "white",
                   }}
-                ></Button>
+                />
               </div>
             </Form.Group>
 
-            {/* Botón para enviar el formulario */}
+            {/* Botón de acceso */}
             <Button
               variant="primary"
               type="submit"

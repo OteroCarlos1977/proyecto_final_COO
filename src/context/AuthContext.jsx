@@ -9,29 +9,23 @@ import usuarios from "../data/usuarios";
 const AuthContext = createContext();
 
 /**
- * Función para generar un token simulado con partes aleatorias y timestamp
- * Esto permite tener un token pseudoúnico en cada inicio de sesión
+ * Genera un token simulado con partes aleatorias y un timestamp
  */
 function generarTokenSimulado() {
-  const parte1 = Math.random().toString(36).substring(2, 8); // Letras y números aleatorios
-  const parte2 = Date.now().toString(36);                    // Timestamp codificado en base 36
-  const parte3 = Math.random().toString(36).substring(2, 8); // Otra parte aleatoria
-
-  return `token-${parte1}-${parte2}-${parte3}`;              // Retorna el token completo
+  const parte1 = Math.random().toString(36).substring(2, 8);
+  const parte2 = Date.now().toString(36);
+  const parte3 = Math.random().toString(36).substring(2, 8);
+  return `token-${parte1}-${parte2}-${parte3}`;
 }
 
-/**
- * Componente proveedor del contexto de autenticación
- * Permite acceder a las funciones de login, logout y al estado del usuario
- */
 export const AuthProvider = ({ children }) => {
-  const [usuario, setUsuario] = useState(null);      // Estado del usuario autenticado
-  const [cargandoUsuario, setCargandoUsuario] = useState(true); //Para la persistencia del usuario
-  const navigate = useNavigate();                    // Hook para redirección de rutas
+  const [usuario, setUsuario] = useState(null);
+  const [cargandoUsuario, setCargandoUsuario] = useState(true);
+  const navigate = useNavigate();
 
   /**
    * Función de inicio de sesión
-   * Verifica si las credenciales coinciden con algún usuario simulado
+   * Verifica credenciales, genera token, guarda usuario y token con expiración (1 hora)
    */
   const login = (username, password) => {
     const user = usuarios.find(
@@ -39,50 +33,57 @@ export const AuthProvider = ({ children }) => {
     );
 
     if (user) {
-      const token = generarTokenSimulado();                // Genera un token simulado
-      setUsuario(user);                                    // Guarda el usuario en el estado
-      localStorage.setItem("usuario", JSON.stringify(user)); // Guarda usuario en localStorage
-      localStorage.setItem("token", token);                // Guarda el token en localStorage
+      const token = generarTokenSimulado();
+      const expiracion = Date.now() + 1000 * 60 * 60; // 1 hora en ms
 
-      // Redirige al panel correspondiente según el rol
+      setUsuario(user);
+      localStorage.setItem("usuario", JSON.stringify(user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("expiracion", expiracion.toString());
+
       navigate(user.rol === "admin" ? "/administrador" : "/");
 
-      // Devuelve el resultado exitoso
       return { success: true, user, token };
     }
 
-    // Si las credenciales no coinciden, devuelve error
     return { success: false, message: "Credenciales inválidas" };
   };
 
   /**
-   * Función para cerrar sesión
-   * Limpia tanto el estado como el almacenamiento local
+   * Función para cerrar sesión manual o por expiración
    */
   const logout = () => {
-    setUsuario(null);                   // Limpia el usuario del estado
-    localStorage.removeItem("usuario"); // Elimina el usuario guardado
-    localStorage.removeItem("token");   // Elimina el token simulado
-    navigate("/login");                // Redirige al login
+    setUsuario(null);
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    localStorage.removeItem("expiracion");
+    navigate("/login");
   };
 
   /**
-   * Al montar el componente, verifica si hay un usuario autenticado previamente guardado
+   * Verifica al cargar la app si hay usuario válido y token no expirado
    */
   useEffect(() => {
     const usuarioGuardado = localStorage.getItem("usuario");
-    if (usuarioGuardado) {
-      setUsuario(JSON.parse(usuarioGuardado)); // Si hay, lo carga al estado
+    const expiracion = localStorage.getItem("expiracion");
+
+    if (usuarioGuardado && expiracion) {
+      const exp = parseInt(expiracion, 10);
+      if (Date.now() < exp) {
+        setUsuario(JSON.parse(usuarioGuardado));
+      } else {
+        logout(); // Token expirado
+      }
     }
-      setCargandoUsuario(false); //Verifica el usuario
+
+    setCargandoUsuario(false);
   }, []);
 
   /**
-   * Función que verifica si el usuario tiene rol de administrador
+   * Retorna true si el usuario es administrador
    */
   const esAdministrador = () => usuario?.rol === "admin";
 
-  // Provee el contexto a los componentes hijos
   return (
     <AuthContext.Provider
       value={{ usuario, login, logout, esAdministrador, cargandoUsuario }}
@@ -93,6 +94,6 @@ export const AuthProvider = ({ children }) => {
 };
 
 /**
- * Hook personalizado para usar el contexto de autenticación fácilmente
+ * Hook personalizado para acceder al contexto
  */
 export const useAuth = () => useContext(AuthContext);
