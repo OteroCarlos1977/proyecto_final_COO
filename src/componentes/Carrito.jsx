@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom'; // Hook para redireccionar entre rutas
 import { Container, ListGroup, Alert, Row, Col, Image } from 'react-bootstrap'; // Componentes de Bootstrap
 import Button from "./Button"; // Botón personalizado
@@ -6,19 +5,19 @@ import { FaTrash } from "react-icons/fa"; // Icono basurero
 import Swal from 'sweetalert2'; // Librería para mostrar alertas 
 import 'bootstrap/dist/css/bootstrap.min.css'; // Estilos de Bootstrap
 import { useCarrito } from '../context/CarritoContext'; // Hook personalizado del contexto del carrito
+import { useAuth } from '../context/AuthContext'; // Hook del contexto de autenticación
 
 function Carrito() {
-    const navigate = useNavigate(); // Redireccionar al usuario
-    // Acceder al estado y funciones del carrito desde el contexto
-    const { carrito, eliminarDelCarrito, vaciarCarrito } = useCarrito(); 
+    const navigate = useNavigate(); // Para redirigir al usuario
+    const { carrito, eliminarDelCarrito, vaciarCarrito } = useCarrito(); // Accede a los datos del carrito
+    const { usuario } = useAuth(); // Accede al estado de autenticación del usuario
 
-    // Calcula el total de la compra sumando subtotales de cada producto 
-    // se lo multiplica por mil para que el precio se ajuste a la realidad
+    // Calcula el total de la compra sumando los subtotales de cada producto
     const calcularTotal = () => {
         return carrito.reduce((total, item) => total + item.precio * item.cantidad, 0).toFixed(2);
     };
 
-    // Muestra una alerta de confirmación antes de eliminar un producto del carrito
+    // Muestra una alerta de confirmación antes de eliminar un producto
     const confirmarEliminacion = (id) => {
         Swal.fire({
             title: '¿Estás seguro?',
@@ -29,26 +28,40 @@ function Carrito() {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                eliminarDelCarrito(id); // Elimina el producto si el usuario confirma
+                eliminarDelCarrito(id); // Elimina el producto
                 Swal.fire('Eliminado', 'El producto fue eliminado del carrito.', 'success');
             }
         });
     };
 
-    // Finaliza la compra, vacía el carrito y redirige a la tienda
+    // Lógica para finalizar la compra
     const finalizarCompra = () => {
+        // Si el usuario no está logueado, muestra alerta y redirige al login
+        if (!usuario) {
+            Swal.fire({
+                title: 'Inicia sesión para continuar',
+                text: 'Debes iniciar sesión para finalizar la compra.',
+                icon: 'info',
+                confirmButtonText: 'Ir al Login',
+            }).then(() => {
+                navigate('/login'); // Redirige a la página de login
+            });
+            return; // Detiene la función
+        }
+
+        // Si el usuario está logueado, muestra mensaje de éxito y vacía el carrito
         Swal.fire({
             title: 'Compra completada',
             text: 'Tu compra ha sido procesada. Pronto recibirás información de la entrega.',
             icon: 'success',
             confirmButtonText: 'Aceptar',
         }).then(() => {
-            vaciarCarrito(); // Limpia el carrito después de la compra
-            navigate('/'); // Redirige al inicio o página principal
+            vaciarCarrito(); // Limpia el carrito
+            navigate('/'); // Redirige a la página de inicio
         });
     };
 
-    // Renderiza un mensaje si el carrito está vacío
+    // Si el carrito está vacío, muestra un mensaje informativo
     if (!carrito || carrito.length === 0) {
         return (
             <Container className="mt-4 text-center">
@@ -59,7 +72,7 @@ function Carrito() {
         );
     }
 
-    // Renderiza el contenido del carrito si hay productos
+    // Si hay productos, renderiza la lista del carrito
     return (
         <Container className="mt-4">
             <h2>Carrito de Compras</h2>
