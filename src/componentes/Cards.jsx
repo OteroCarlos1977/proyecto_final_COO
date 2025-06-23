@@ -38,7 +38,7 @@ function Cards() {
     // Filtrar por categoría si se seleccionó alguna
     if (categoryFilter) {
       resultadosFiltrados = resultadosFiltrados.filter(
-        (producto) => producto.categoria === categoryFilter
+        (producto) => producto.category === categoryFilter
       );
     }
 
@@ -47,12 +47,12 @@ function Cards() {
       const textoBusqueda = searchTerm.toLowerCase();
       resultadosFiltrados = resultadosFiltrados.filter(
         (producto) =>
-          (producto.producto &&
-            producto.producto.toLowerCase().includes(textoBusqueda)) ||
-          (producto.descripcion &&
-            producto.descripcion.toLowerCase().includes(textoBusqueda)) ||
-          (producto.categoria &&
-            producto.categoria.toLowerCase().includes(textoBusqueda))
+          (producto.title &&
+            producto.title.toLowerCase().includes(textoBusqueda)) ||
+          (producto.description &&
+            producto.description.toLowerCase().includes(textoBusqueda)) ||
+          (producto.category &&
+            producto.category.toLowerCase().includes(textoBusqueda))
       );
     }
 
@@ -65,7 +65,7 @@ function Cards() {
     agregarAlCarrito(producto);
     Swal.fire({
       title: "¡Agregado!",
-      text: `${producto.producto} se ha agregado al carrito.`,
+      text: `${producto.title} se ha agregado al carrito.`,
       icon: "success",
       timer: 1500,
       showConfirmButton: false,
@@ -138,7 +138,7 @@ function Cards() {
                   className="p-2"
                   style={{ fontSize: "1rem", minHeight: "3em" }}
                 >
-                  {producto.producto}
+                  {producto.title}
                 </Card.Title>
 
                 {/* Imagen del producto */}
@@ -148,8 +148,8 @@ function Cards() {
                 >
                   <Card.Img
                     variant="top"
-                    src={producto.imagen}
-                    alt={producto.producto}
+                    src={producto.image}
+                    alt={producto.title}
                     title= "Ver Detalle" 
                     style={{
                       maxHeight: "100%",
@@ -178,7 +178,7 @@ function Cards() {
                   </Card.Text>*/}
                   <Card.Text className="mt-auto pt-2">
                     <strong>Precio:</strong> $
-                    {producto.precio}{" "}
+                    {producto.price}{" "}
                     {/* Se multiplica para simular moneda local */}
                   </Card.Text>
 

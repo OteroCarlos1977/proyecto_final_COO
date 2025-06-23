@@ -1,27 +1,22 @@
-// Importa hooks de React Router
 import { useParams, useNavigate } from "react-router-dom";
-
-// Importa componentes para el front
 import { Container, Spinner, Alert } from "react-bootstrap";
 import Button from "./Button";
-
-// Hook personalizado para obtener los datos del producto por ID
 import useFetchProductById from "../hooks/DataProductoDetalle";
 
 function DetalleProducto() {
-  // Extrae el ID del producto desde la URL usando useParams
+  // Obtiene el ID del producto desde la URL
   const { id } = useParams();
 
-  // Hook para redireccionar a otra ruta 
+  // Hook de navegación
   const navigate = useNavigate();
 
-  // Hook personalizado que obtiene el producto desde la API usando el ID
+  // Hook personalizado que obtiene un producto por ID desde la API
   const { producto, loading, error } = useFetchProductById(
     "https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos",
     id
   );
 
-  // Mostrar spinner mientras se carga el producto
+  // Si está cargando, muestra spinner centrado
   if (loading) {
     return (
       <Container className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
@@ -32,16 +27,16 @@ function DetalleProducto() {
     );
   }
 
-  // Muestra mensaje de error si falla la carga de datos
+  // Si hay error en la carga
   if (error) {
     return (
       <Container className="mt-5">
-        <Alert variant="danger">Error al cargar productos: {error}</Alert>
+        <Alert variant="danger">Error al cargar el producto: {error}</Alert>
       </Container>
     );
   }
 
-  // Si no se encontró el producto con el ID proporcionado
+  // Si no se encontró producto con el ID
   if (!producto) {
     return (
       <Container className="mt-5">
@@ -50,17 +45,17 @@ function DetalleProducto() {
     );
   }
 
-  
-  // Renderiza los detalles del producto
+  // Renderiza la vista de detalle del producto
   return (
     <Container className="m-4">
-      {/* Título del producto */}
-      <h2>{producto.producto}</h2>
+      {/* Título */}
+      <h2 className="mb-3">{producto.title}</h2>
 
-      {/* Imagen del producto con estilo para que se vea bien */}
+      {/* Imagen */}
       <img
-        src={producto.imagen}
-        alt={producto.producto}
+        src={producto.image}
+        alt={producto.title}
+        className="img-fluid rounded border"
         style={{
           width: "100%",
           maxHeight: "300px",
@@ -69,28 +64,32 @@ function DetalleProducto() {
         }}
       />
 
-      {/* Precio del producto */}
+      {/* Precio */}
       <p>
-        <strong>Precio:</strong> ${producto.precio}
+        <strong>Precio:</strong> ${producto.price}
       </p>
 
-      {/* Categoría a la que pertenece el producto */}
+      {/* Categoría */}
       <p>
-        <strong>Producto:</strong> {producto.producto}
+        <strong>Categoría:</strong> {producto.category}
       </p>
 
-      {/* Descripción detallada del producto */}
+      {/* Stock */}
       <p>
-        <strong>Descripción:</strong> {producto.descripcion}
+        <strong>Stock disponible:</strong> {producto.stock}
       </p>
 
-      
-      {/* Botón para volver a la página principal */}
+      {/* Descripción */}
+      <p>
+        <strong>Descripción:</strong> {producto.description}
+      </p>
+
+      {/* Botón para volver */}
       <Button
-        className="mt-2 align-self-center w-20"
+        className="mt-3"
         texto="Volver"
         onClick={() => navigate("/")}
-        tooltip="Volver Página Principal"
+        tooltip="Volver a la página principal"
         variant="primary"
       />
     </Container>
