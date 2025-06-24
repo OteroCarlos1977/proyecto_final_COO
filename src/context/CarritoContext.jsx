@@ -1,62 +1,66 @@
+// Importa funciones esenciales de React
 import { createContext, useContext, useState, useEffect } from "react";
 
-// Crear el contexto del carrito
+// Crea el contexto del carrito (acceso global sin prop drilling)
 const CarritoContext = createContext();
 
-// Proveedor del contexto que encapsula la lógica global del carrito
+// Componente proveedor del contexto, que envuelve a toda la app
 export const CarritoProvider = ({ children }) => {
-  const [carrito, setCarrito] = useState([]);
+  const [carrito, setCarrito] = useState([]); // Estado global del carrito
 
-  // Función para agregar un producto al carrito
+  // ✅ Agrega un producto al carrito
+  // Si ya existe, aumenta la cantidad solo si no supera el stock
+  // Si no existe, lo agrega con cantidad 1
   const agregarAlCarrito = (producto) => {
     setCarrito((prev) => {
       const existente = prev.find((item) => item.id === producto.id);
       if (existente) {
-        // Si el producto ya está en el carrito, aumenta su cantidad
+        if (existente.cantidad >= producto.stock) {
+          return prev; // No agrega más si supera el stock
+        }
         return prev.map((item) =>
           item.id === producto.id
             ? { ...item, cantidad: item.cantidad + 1 }
             : item
         );
       } else {
-        // Si no está, lo agrega con cantidad inicial 1
         return [...prev, { ...producto, cantidad: 1 }];
       }
     });
   };
 
-  // Función para eliminar un producto del carrito
+  // ✅ Elimina un producto del carrito por ID
   const eliminarDelCarrito = (id) => {
     setCarrito((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // Función para vaciar todo el carrito
+  // ✅ Vacía completamente el carrito
   const vaciarCarrito = () => setCarrito([]);
 
-  // Función para calcular el total del carrito
+  // ✅ Calcula el total en pesos del carrito
   const calcularTotal = () => {
     return carrito
       .reduce((total, item) => total + item.price * item.cantidad, 0)
-      .toFixed(2);
+      .toFixed(2); // Se devuelve como string con 2 decimales
   };
 
-  // Función para contar la cantidad total de unidades
+  // ✅ Cuenta la cantidad total de unidades en el carrito
   const cantidadTotal = () => {
     return carrito.reduce((acc, item) => acc + item.cantidad, 0);
   };
 
-  // ✅ Función para cambiar la cantidad de un producto (usada con botones + / -)
+  // ✅ Cambia la cantidad de un producto de forma manual (+/-), sin superar stock
   const cambiarCantidad = (id, nuevaCantidad) => {
     setCarrito((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, cantidad: Math.max(1, nuevaCantidad) } // No permite menos de 1
+          ? { ...item, cantidad: Math.min(Math.max(1, nuevaCantidad), item.stock || 1) }
           : item
       )
     );
   };
 
-  // Al iniciar, carga el carrito desde localStorage si existe
+  // ✅ Carga el carrito desde localStorage si existe (una sola vez al montar)
   useEffect(() => {
     const carritoGuardado = localStorage.getItem("carrito");
     if (carritoGuardado) {
@@ -64,11 +68,12 @@ export const CarritoProvider = ({ children }) => {
     }
   }, []);
 
-  // Cada vez que el carrito cambia, lo guarda en localStorage
+  // ✅ Guarda el carrito en localStorage cada vez que cambia
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
   }, [carrito]);
 
+  // Exporta las funciones y estado como valor del contexto
   return (
     <CarritoContext.Provider
       value={{
@@ -78,7 +83,7 @@ export const CarritoProvider = ({ children }) => {
         vaciarCarrito,
         calcularTotal,
         cantidadTotal,
-        cambiarCantidad, // ✅ Expuesta para que otros componentes la usen
+        cambiarCantidad,
       }}
     >
       {children}
@@ -86,5 +91,5 @@ export const CarritoProvider = ({ children }) => {
   );
 };
 
-// Hook personalizado para consumir el contexto del carrito fácilmente
+// Hook personalizado para consumir fácilmente el contexto del carrito
 export const useCarrito = () => useContext(CarritoContext);

@@ -1,67 +1,73 @@
-//Importación de componentes de Reac y React Dom
+// Hooks y dependencias de React y React Router
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// Importación de componentes de Bootstrap y utilidades
-import { Card, Container, Row, Col, Spinner, Alert, Form, FormControl} from "react-bootstrap";
-import Button from "./Button"; // Componente de botón personalizado
-import { FaShoppingCart } from "react-icons/fa"; // Ícono de carrito
-import { useCarrito } from "../context/CarritoContext"; // Contexto para manejar el carrito de compras
-import { useCategoryFilter } from "../context/CategoryFilterContext"; // Contexto para el filtro por categoría
-import Swal from "sweetalert2"; // Alertas
-import DataProductos from "../hooks/DataProductos"; // Hook personalizado para obtener productos
 
+// Componentes de Bootstrap para layout, tarjetas y formularios
+import { Card, Container, Row, Col, Spinner, Alert, Form, FormControl } from "react-bootstrap";
+
+// Botón personalizado e ícono
+import Button from "./Button";
+import { FaShoppingCart } from "react-icons/fa";
+
+// Contextos para carrito y filtro por categoría
+import { useCarrito } from "../context/CarritoContext";
+import { useCategoryFilter } from "../context/CategoryFilterContext";
+
+// Librería para alertas visuales
+import Swal from "sweetalert2";
+
+// Hook personalizado para obtener productos desde la API
+import DataProductos from "../hooks/DataProductos";
+
+// Componente principal que renderiza las tarjetas de productos
 function Cards() {
-  //Inicializo el useNavigate, para navegar entre paginas
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Navegación entre rutas
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para búsqueda
+  const { data, loading, error } = DataProductos("https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos"); // Carga de productos
+  const [filteredDatos, setFilteredDatos] = useState([]); // Productos filtrados para mostrar
 
-  // Estado local para almacenar el término de búsqueda
-  const [searchTerm, setSearchTerm] = useState("");
+  const { agregarAlCarrito, carrito } = useCarrito(); // Función y datos del carrito
+  const { categoryFilter } = useCategoryFilter(); // Filtro de categoría actual
 
-  // Hook personalizado que obtiene los productos desde la API 
-  const { data, loading, error } = DataProductos(
-    "https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos"
-  );
-
-  // Estado local que almacena los productos ya filtrados
-  const [filteredDatos, setFilteredDatos] = useState([]);
-
-  // Funciones del contexto: para agregar productos al carrito
-  const { agregarAlCarrito } = useCarrito();
-
-  // Filtro de categoría actual seleccionado desde el contexto
-  const { categoryFilter } = useCategoryFilter();
-
-  // Efecto para filtrar productos cada vez que cambian los datos, el término de búsqueda o la categoría
+  // Efecto que filtra productos según stock, categoría y búsqueda
   useEffect(() => {
-    let resultadosFiltrados = data || [];
+    let resultadosFiltrados = data?.filter((producto) => producto.stock > 0) || [];
 
-    // Filtrar por categoría si se seleccionó alguna
+    // Filtro por categoría si está activa
     if (categoryFilter) {
       resultadosFiltrados = resultadosFiltrados.filter(
         (producto) => producto.category === categoryFilter
       );
     }
 
-    // Filtrar por término de búsqueda (título o descripción)
+    // Filtro por texto ingresado en búsqueda
     if (searchTerm) {
       const textoBusqueda = searchTerm.toLowerCase();
       resultadosFiltrados = resultadosFiltrados.filter(
         (producto) =>
-          (producto.title &&
-            producto.title.toLowerCase().includes(textoBusqueda)) ||
-          (producto.description &&
-            producto.description.toLowerCase().includes(textoBusqueda)) ||
-          (producto.category &&
-            producto.category.toLowerCase().includes(textoBusqueda))
+          producto.title?.toLowerCase().includes(textoBusqueda) ||
+          producto.description?.toLowerCase().includes(textoBusqueda) ||
+          producto.category?.toLowerCase().includes(textoBusqueda)
       );
     }
 
-    // Actualiza el estado con los resultados filtrados
+    // Actualiza los productos visibles
     setFilteredDatos(resultadosFiltrados);
   }, [searchTerm, data, categoryFilter]);
 
-  // Maneja el evento de agregar un producto al carrito y muestra alerta con SweetAlert
+  // Agrega al carrito solo si el stock disponible lo permite
   const handleComprar = (producto) => {
+    const enCarrito = carrito.find((item) => item.id === producto.id);
+
+    if (enCarrito && enCarrito.cantidad >= producto.stock) {
+      Swal.fire({
+        title: "Sin stock suficiente",
+        text: `Solo quedan ${producto.stock} unidades disponibles.`,
+        icon: "warning",
+      });
+      return;
+    }
+
     agregarAlCarrito(producto);
     Swal.fire({
       title: "¡Agregado!",
@@ -72,24 +78,20 @@ function Cards() {
     });
   };
 
-  // Maneja el cambio en el campo de búsqueda
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  // Actualiza el estado de búsqueda en tiempo real
+  const handleSearchChange = (event) => setSearchTerm(event.target.value);
 
-  // Muestra spinner mientras los datos están cargando
+  // Muestra spinner si los productos están cargando
   if (loading) {
     return (
       <Container className="text-center mt-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </Spinner>
+        <Spinner animation="border" role="status" />
         <p>Cargando productos...</p>
       </Container>
     );
   }
 
-  // Muestra mensaje de error si falla la carga de datos
+  // Muestra mensaje de error si la carga falló
   if (error) {
     return (
       <Container className="mt-5">
@@ -100,14 +102,14 @@ function Cards() {
 
   return (
     <Container className="mt-4">
-      {/* Título dinámico según el filtro o término de búsqueda */}
+      {/* Título dinámico según filtro o búsqueda */}
       <div className="text-center mb-4">
         {!searchTerm && !categoryFilter && <h1>Nuestros Productos</h1>}
         {searchTerm && <h2>Resultados para: "{searchTerm}"</h2>}
         {categoryFilter && !searchTerm && <h2>Productos Seleccionados</h2>}
       </div>
 
-      {/* Campo de búsqueda */}
+      {/* Barra de búsqueda */}
       <div className="mb-3">
         <Form className="d-flex">
           <FormControl
@@ -117,72 +119,42 @@ function Cards() {
             aria-label="Buscar"
             value={searchTerm}
             onChange={handleSearchChange}
-            style={{
-              width: "50%",
-              border: "1px solid #ccc",
-              padding: "5px",
-              borderRadius: "5px",
-            }}
+            style={{ width: "50%", border: "1px solid #ccc", padding: "5px", borderRadius: "5px" }}
           />
         </Form>
       </div>
 
-      {/* Renderizado de productos */}
+      {/* Renderizado de productos filtrados */}
       <Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4 justify-content-center">
         {filteredDatos.length > 0 ? (
           filteredDatos.map((producto) => (
             <Col key={producto.id} className="d-flex justify-content-center">
               <Card className="shadow-sm w-100 d-flex flex-column h-100">
                 {/* Título del producto */}
-                <Card.Title
-                  className="p-2"
-                  style={{ fontSize: "1rem", minHeight: "3em" }}
-                >
+                <Card.Title className="p-2" style={{ fontSize: "1rem", minHeight: "3em" }}>
                   {producto.title}
                 </Card.Title>
+                <Card.Title className="p-2" style={{ fontSize: "1rem", minHeight: "3em" }}>
+                  Stock: {producto.stock}
+                </Card.Title>
 
-                {/* Imagen del producto */}
-                <div
-                  className="d-flex justify-content-center align-items-center p-3"
-                  style={{ height: "200px", overflow: "hidden" }}
-                >
+                {/* Imagen del producto clickeable */}
+                <div className="d-flex justify-content-center align-items-center p-3" style={{ height: "200px", overflow: "hidden" }}>
                   <Card.Img
                     variant="top"
                     src={producto.image}
                     alt={producto.title}
-                    title= "Ver Detalle" 
-                    style={{
-                      maxHeight: "100%",
-                      maxWidth: "100%",
-                      objectFit: "contain",
-                      cursor: "pointer", 
-                    }}
+                    title="Ver Detalle"
+                    style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain", cursor: "pointer" }}
                     onClick={() => navigate(`/producto/${producto.id}`)}
                   />
-                  
                 </div>
 
-                {/* Cuerpo de la tarjeta con descripción, precio y botón */}
+                {/* Cuerpo con precio y botón de compra */}
                 <Card.Body className="d-flex flex-column p-2">
-                  {/*<Card.Text
-                    style={{
-                      fontSize: "0.8rem",
-                      flexGrow: 1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      WebkitLineClamp: "3",
-                      WebkitBoxOrient: "vertical",
-                    }}
-                  >
-                    {producto.description}
-                  </Card.Text>*/}
                   <Card.Text className="mt-auto pt-2">
-                    <strong>Precio:</strong> $
-                    {producto.price}{" "}
-                    {/* Se multiplica para simular moneda local */}
+                    <strong>Precio:</strong> ${producto.price}
                   </Card.Text>
-
-                  {/* Botón de comprar */}
                   <Button
                     className="mt-2 align-self-center w-75"
                     texto="Comprar"
@@ -196,7 +168,7 @@ function Cards() {
             </Col>
           ))
         ) : (
-          // Mensaje si no hay productos que coincidan con los filtros
+          // Mensaje si no hay productos para mostrar
           <Col xs={12} className="text-center mt-4">
             <Alert variant="info">
               {searchTerm || categoryFilter
