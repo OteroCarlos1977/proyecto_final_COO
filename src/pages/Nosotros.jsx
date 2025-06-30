@@ -27,7 +27,7 @@ const Nosotros = () => {
           {/* Sección de ropa con imagen, título y descripción */}
           <div className="text-center">
             <img
-              src="./imagenes/ropa.jpg"
+              src="/imagenes/ropa.jpg"
               alt="Ropa"
               className="rounded-2xl shadow-lg mb-4 w-full h-60 object-cover"
             />
@@ -43,7 +43,7 @@ const Nosotros = () => {
           {/* Sección de tecnología con imagen, título y descripción */}
           <div className="text-center">
             <img
-              src="./imagenes/electronica.jpg"
+              src="/imagenes/electronica.jpg"
               alt="Tecnología"
               className="rounded-2xl shadow-lg mb-4 w-full h-60 object-cover"
             />
@@ -59,7 +59,7 @@ const Nosotros = () => {
           {/* Sección de bijouterie con imagen, título y descripción */}
           <div className="text-center">
             <img
-              src="./imagenes/joyas.jpg"
+              src="/imagenes/joyas.jpg"
               alt="Bijouterie"
               className="rounded-2xl shadow-lg mb-4 w-full h-60 object-cover"
             />
