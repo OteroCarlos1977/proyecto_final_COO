@@ -63,7 +63,6 @@ Este enfoque no debe usarse como seguridad real en producción. Para una versió
 
 ## Mejoras pendientes
 
-- Revisar dependencias no utilizadas o mal nombradas, especialmente `boostrap` y `react-icon`.
 - Agregar capturas de pantalla y enlace de demo.
 - Documentar usuarios demo disponibles.
 - Agregar pruebas básicas para rutas, login y carrito.

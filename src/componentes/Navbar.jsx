@@ -1,29 +1,21 @@
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap"; // Componentes de Bootstrap para estructura y diseño del navbar
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Herramientas de enrutamiento
-import Button from "./Button"; // Componente personalizado de botón
-import { FaShoppingCart } from "react-icons/fa"; // Icono de carrito
-import { useCarrito } from "../context/CarritoContext"; // Contexto para manejar el carrito
-import { useAuth } from "../context/AuthContext"; // Contexto para manejar autenticación de usuario
-import { MdLogin, MdLogout } from "react-icons/md"; // Iconos de usuario
-import { useCategoryFilter } from "../context/CategoryFilterContext"; // Contexto para aplicar filtro por categoría
+import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import Button from "./Button";
+import { FaShoppingCart } from "react-icons/fa";
+import { useCarrito } from "../context/CarritoContext";
+import { useAuth } from "../context/AuthContext";
+import { MdLogin, MdLogout } from "react-icons/md";
+import { useCategoryFilter } from "../context/CategoryFilterContext";
 
 function MiNavbar() {
-  const navigate = useNavigate(); // Hook para redireccionamiento
-  const { cantidadTotal } = useCarrito(); // Obtiene cantidad total de productos en el carrito
-  const { usuario, logout } = useAuth(); // Obtiene información del usuario autenticado y función para cerrar sesión
-  const { setCategoryFilter } = useCategoryFilter(); // Permite establecer filtro de categoría
-  const location = useLocation(); // Obtiene la ruta actual
+  const navigate = useNavigate();
+  const { cantidadTotal } = useCarrito();
+  const { usuario, logout } = useAuth();
+  const { setCategoryFilter } = useCategoryFilter();
+  const location = useLocation();
 
-  
-
-  // Determina si el usuario actual es un administrador
-  // a traves del rol 
   const esAdministrador = usuario && usuario.rol === "admin";
-
-  // Solo se muestra el dropdown de productos si la ruta actual es "/"
   const mostrarDropdown = location.pathname === "/";
-
-  // Estilos para el Link Activo
   const activeLinkStyle = {
     color: "#0d6efd", 
     fontWeight: "bold",
@@ -34,7 +26,6 @@ function MiNavbar() {
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="px-3">
       <Container fluid>
-        {/* Logo que redirige a inicio */}
         <Navbar.Brand as={Link} to="/">
           <img
             alt="logo"
@@ -45,14 +36,11 @@ function MiNavbar() {
           />
         </Navbar.Brand>
 
-        {/* Botón para colapsar el menú en pantallas pequeñas */}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-        {/* Contenido del menú colapsable */}
         {!esAdministrador && (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              {/* Links de navegación principales */}
               <Nav.Link as={Link} to="/" active={location.pathname === "/"} style={location.pathname === "/" ? activeLinkStyle : {}}>
                 Inicio
               </Nav.Link>
@@ -83,7 +71,6 @@ function MiNavbar() {
                 </Nav.Link>
               )}
 
-              {/* Dropdown de categorías (solo en la página de inicio y si NO es administrador) */}
               {mostrarDropdown && (
                 <NavDropdown title="Productos" id="basic-nav-dropdown">
                   <NavDropdown.Item onClick={() => setCategoryFilter(null)}>
@@ -116,9 +103,7 @@ function MiNavbar() {
           </Navbar.Collapse>
         )}
 
-        {/* Zona derecha del navbar: login/logout y carrito */}
         <div className="d-flex ms-auto align-items-center">
-          {/* Botón de sesión según estado del usuario */}
           {usuario ? (
             <Button
               variant="outline-primary"
@@ -137,7 +122,6 @@ function MiNavbar() {
             />
           )}
 
-          {/* Botón del carrito con cantidad de productos */}
           <Button
             variant="outline-primary"
             onClick={() => navigate("/carrito")}
@@ -147,7 +131,6 @@ function MiNavbar() {
             texto={
               cantidadTotal() > 0 ? (
                 <>
-                  {/* Indicador visual de cantidad en el carrito */}
                   <span
                     style={{
                       position: "absolute",

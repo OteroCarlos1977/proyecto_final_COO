@@ -1,7 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { Container } from "react-bootstrap";
 
-//Pagina simple para que renderice algo, luego se podrá modificar
 function PerfilUsuario() {
     const { usuario } = useAuth();
 
@@ -14,7 +13,6 @@ function PerfilUsuario() {
             <h1>Datos de Usuario</h1>
             <p><strong>Apellido y Nombre:</strong> {usuario.nombre}</p>
             <p><strong>Usuario:</strong> {usuario.usuario}</p>
-            <p><strong>Contraseña:</strong> {usuario.password}</p>
             <p><strong>Email:</strong> {usuario.email}</p>
         </Container>
     );
