@@ -1,69 +1,128 @@
 # Proyecto Final COO
 
-Aplicación web desarrollada como proyecto final académico. Implementa una experiencia tipo e-commerce con catálogo de productos, navegación por páginas, carrito de compras, autenticación simulada, perfil de usuario y panel de administración protegido.
+Proyecto final academico desarrollado con React y Vite. La aplicacion simula una tienda online con catalogo de productos, filtros por categoria, autenticacion local, perfil de usuario, panel de administracion protegido y carrito de compras funcional.
 
-## Características
+## Objetivo
 
-- Catálogo de productos con componentes reutilizables.
-- Navegación con React Router.
-- Carrito de compras mediante contexto global.
-- Filtro de categorías con contexto dedicado.
-- Login con usuarios locales y token simulado en `localStorage`.
-- Rutas protegidas para usuario autenticado y administrador.
-- Panel administrativo.
+El proyecto demuestra una experiencia e-commerce completa desde el frontend: navegacion, catalogo, seleccion de productos, control de stock, carrito persistente y cierre de compra con actualizacion de datos en una API mock externa.
+
+## Funcionalidades
+
+- Catalogo de productos consumido desde MockAPI.
+- Busqueda de productos por texto.
+- Filtro por categorias desde contexto global.
+- Detalle de producto.
+- Carrito de compras funcional con contexto global.
+- Persistencia del carrito en `localStorage`.
+- Agregado de productos con validacion de stock.
+- Incremento y decremento de cantidades sin superar stock disponible.
+- Eliminacion individual de productos.
+- Vaciado del carrito al finalizar compra.
+- Calculo de subtotal por item y total general.
+- Finalizacion de compra con actualizacion de stock en MockAPI.
+- Login con usuarios locales.
+- Perfil de usuario autenticado.
+- Panel de administracion protegido por rol.
 - Alertas visuales con SweetAlert2.
-- Estilos basados en Bootstrap y React Bootstrap.
+- UI basada en Bootstrap, React Bootstrap y React Icons.
 
-## Tecnologías
+## Tecnologias
 
 - React 19
 - Vite 6
 - React Router DOM 7
-- Bootstrap / React Bootstrap
+- Context API
+- Bootstrap
+- React Bootstrap
 - SweetAlert2
 - React Icons
+- MockAPI
 - localStorage
 
-## Instalación
+## Usuarios Demo
+
+Administrador:
+
+```text
+Usuario: admin
+Password: admin123
+```
+
+Usuario comun:
+
+```text
+Usuario: user
+Password: user123
+```
+
+Tambien existen usuarios academicos de prueba en `src/data/usuarios.js`.
+
+## Instalacion
 
 ```bash
 npm install
 ```
 
-## Ejecución local
+## Ejecucion Local
 
 ```bash
 npm run dev
 ```
 
-La aplicación queda disponible normalmente en `http://localhost:5173`.
+La aplicacion queda disponible normalmente en:
 
-## Build de producción
+```text
+http://localhost:5173
+```
+
+## Build
 
 ```bash
 npm run build
 ```
 
-## Estructura general
+Para previsualizar el build:
+
+```bash
+npm run preview
+```
+
+## Estructura
 
 ```text
 src/
-  componentes/   Componentes reutilizables de UI
-  context/       Contextos de autenticación, carrito y filtros
-  data/          Datos locales de productos y usuarios
-  pages/         Páginas principales de la aplicación
-  App.jsx        Rutas y composición principal
+  componentes/   Componentes reutilizables: cards, carrito, navbar, formularios
+  context/       Autenticacion, carrito, rutas protegidas y filtros
+  data/          Usuarios locales de prueba
+  hooks/         Consumo de datos de productos
+  pages/         Vistas principales
 ```
 
-## Autenticación
+## Carrito Funcional
 
-La autenticación es simulada para fines académicos. Los usuarios se validan contra datos locales y el token se guarda en `localStorage` con expiración de una hora.
+El carrito esta implementado en `src/context/CarritoContext.jsx` y se consume desde `src/componentes/Carrito.jsx`.
 
-Este enfoque no debe usarse como seguridad real en producción. Para una versión productiva se recomienda backend con sesiones/JWT reales, contraseñas hasheadas y validación del lado servidor.
+Incluye:
 
-## Mejoras pendientes
+- Estado global disponible en toda la aplicacion.
+- Persistencia en `localStorage`.
+- Validacion para no agregar mas unidades que el stock disponible.
+- Control manual de cantidad con botones `+` y `-`.
+- Calculo de total y subtotales.
+- Confirmacion antes de eliminar productos.
+- Redireccion a login si el usuario intenta finalizar compra sin iniciar sesion.
+- Actualizacion de stock en MockAPI al completar la compra.
 
-- Agregar capturas de pantalla y enlace de demo.
-- Documentar usuarios demo disponibles.
-- Agregar pruebas básicas para rutas, login y carrito.
-- Separar datos mock de lógica de negocio para facilitar integración con una API real.
+## Autenticacion
+
+La autenticacion es simulada para fines academicos. Los usuarios se validan contra datos locales y el token se guarda en `localStorage` con expiracion de una hora.
+
+Este enfoque no debe usarse como seguridad real en produccion. Para una version productiva se recomienda backend con sesiones o JWT reales, contrasenas hasheadas y validacion del lado servidor.
+
+## Mejoras Recomendadas
+
+- Agregar deploy publico estable.
+- Agregar capturas de pantalla al README.
+- Sustituir MockAPI por backend propio o servicio persistente.
+- Agregar tests para carrito, login y rutas protegidas.
+- Manejar errores de imagenes externas con placeholders.
