@@ -14,26 +14,22 @@ function Administrador() {
   const { usuario } = useAuth();
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [actualizar, setActualizar] = useState(false);
-  const [productoEditar, setProductoEditar] = useState(null); // Producto a editar
+  const [productoEditar, setProductoEditar] = useState(null);
 
-  // Hook personalizado que carga los productos desde MockAPI
   const { data, loading, error } = DataProductos(
     "https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos",
     actualizar
   );
 
-  // Abre formulario para agregar nuevo producto
   const handleAgregarProducto = () => {
-    setProductoEditar(null); // Limpia datos anteriores
+    setProductoEditar(null);
     setMostrarFormulario(true);
   };
 
-  // Cierra modal
   const handleCerrarFormulario = () => setMostrarFormulario(false);
 
-  // Llama después de agregar/editar un producto
   const handleProductoAgregado = () => {
-    setActualizar(!actualizar); // Fuerza recarga
+    setActualizar(!actualizar);
     MySwal.fire({
       icon: "success",
       title: "Producto guardado",
@@ -43,7 +39,6 @@ function Administrador() {
     });
   };
 
-  // Prepara formulario con datos del producto a editar
   const handleEditarProducto = (id) => {
     const producto = data.find((p) => p.id === id);
     if (producto) {
@@ -52,7 +47,6 @@ function Administrador() {
     }
   };
 
-  // Elimina producto luego de confirmación
   const handleEliminarProducto = async (id) => {
     const result = await MySwal.fire({
       title: "¿Estás seguro?",
@@ -82,7 +76,6 @@ function Administrador() {
     }
   };
 
-  // Loading
   if (loading) {
     return (
       <Container className="text-center mt-5">
@@ -92,7 +85,6 @@ function Administrador() {
     );
   }
 
-  // Error
   if (error) {
     return (
       <Container className="mt-5">
@@ -103,7 +95,6 @@ function Administrador() {
 
   return (
     <Container className="mt-5">
-      {/* Botón para nuevo producto */}
       <Button
         Icono={FaPlus}
         texto="Nuevo"
@@ -185,12 +176,11 @@ function Administrador() {
         </div>
       )}
 
-      {/* Modal con formulario reutilizable */}
       <FormularioProducto
         show={mostrarFormulario}
         handleClose={handleCerrarFormulario}
         onProductoAgregado={handleProductoAgregado}
-        productoEditar={productoEditar} // Producto que se está editando (si hay)
+        productoEditar={productoEditar}
       />
     </Container>
   );

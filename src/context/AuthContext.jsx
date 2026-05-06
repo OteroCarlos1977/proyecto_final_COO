@@ -1,16 +1,10 @@
-// Importa funciones necesarias de React y React Router
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useCallback, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Importa un array de usuarios desde un archivo local (simulación de base de datos)
 import usuarios from "../data/usuarios";
 
-// Crea el contexto de autenticación
 const AuthContext = createContext();
 
-/**
- * Genera un token simulado con partes aleatorias y un timestamp
- */
 function generarTokenSimulado() {
   const parte1 = Math.random().toString(36).substring(2, 8);
   const parte2 = Date.now().toString(36);
@@ -23,10 +17,6 @@ export const AuthProvider = ({ children }) => {
   const [cargandoUsuario, setCargandoUsuario] = useState(true);
   const navigate = useNavigate();
 
-  /**
-   * Función de inicio de sesión
-   * Verifica credenciales, genera token, guarda usuario y token con expiración (1 hora)
-   */
   const login = (username, password) => {
     const user = usuarios.find(
       (u) => u.usuario === username && u.password === password
@@ -34,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
     if (user) {
       const token = generarTokenSimulado();
-      const expiracion = Date.now() + 1000 * 60 * 60; // 1 hora en ms
+      const expiracion = Date.now() + 1000 * 60 * 60;
 
       setUsuario(user);
       localStorage.setItem("usuario", JSON.stringify(user));
@@ -49,20 +39,14 @@ export const AuthProvider = ({ children }) => {
     return { success: false, message: "Credenciales inválidas" };
   };
 
-  /**
-   * Función para cerrar sesión manual o por expiración
-   */
-  const logout = () => {
+  const logout = useCallback(() => {
     setUsuario(null);
     localStorage.removeItem("usuario");
     localStorage.removeItem("token");
     localStorage.removeItem("expiracion");
     navigate("/login");
-  };
+  }, [navigate]);
 
-  /**
-   * Verifica al cargar la app si hay usuario válido y token no expirado
-   */
   useEffect(() => {
     const usuarioGuardado = localStorage.getItem("usuario");
     const expiracion = localStorage.getItem("expiracion");
@@ -72,16 +56,13 @@ export const AuthProvider = ({ children }) => {
       if (Date.now() < exp) {
         setUsuario(JSON.parse(usuarioGuardado));
       } else {
-        logout(); // Token expirado
+        logout();
       }
     }
 
     setCargandoUsuario(false);
-  }, []);
+  }, [logout]);
 
-  /**
-   * Retorna true si el usuario es administrador
-   */
   const esAdministrador = () => usuario?.rol === "admin";
 
   return (
@@ -93,7 +74,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-/**
- * Hook personalizado para acceder al contexto
- */
 export const useAuth = () => useContext(AuthContext);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, Form, Card } from "react-bootstrap";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -6,10 +6,8 @@ import { useAuth } from "../context/AuthContext";
 import { AiFillEye, AiFillEyeInvisible, AiOutlineInfoCircle } from "react-icons/ai";
 import Button from "../componentes/Button";
 
-// Inicializa SweetAlert con soporte para componentes React
 const MySwal = withReactContent(Swal);
 
-// Alerta informativa con credenciales de prueba
 const handleInfoClick = () => {
   MySwal.fire({
     title: "Información de Acceso",
@@ -29,7 +27,6 @@ function Login() {
 
   const { login } = useAuth();
 
-  // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -51,7 +48,6 @@ function Login() {
     }
   };
 
-  // Alternar visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -60,7 +56,6 @@ function Login() {
     <Container className="mt-5" style={{ maxWidth: "400px" }}>
       <Card>
         <Card.Body>
-          {/* Icono de ayuda con info de acceso */}
           <div className="d-flex justify-content-end">
             <AiOutlineInfoCircle
               size={24}
@@ -73,7 +68,6 @@ function Login() {
           <Card.Title className="mb-4 text-center">Iniciar Sesión</Card.Title>
 
           <Form onSubmit={handleSubmit}>
-            {/* Usuario */}
             <Form.Group controlId="formUsuario" className="mb-3">
               <Form.Label>Usuario</Form.Label>
               <Form.Control
@@ -84,7 +78,6 @@ function Login() {
               />
             </Form.Group>
 
-            {/* Contraseña con botón mostrar/ocultar */}
             <Form.Group controlId="formPassword" className="mb-3">
               <Form.Label>Contraseña</Form.Label>
               <div className="input-group">
@@ -109,7 +102,6 @@ function Login() {
               </div>
             </Form.Group>
 
-            {/* Botón de acceso */}
             <Button
               variant="primary"
               type="submit"

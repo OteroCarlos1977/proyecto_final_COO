@@ -1,7 +1,5 @@
-// Importa hook de navegación de rutas
 import { useNavigate } from 'react-router-dom';
 
-// Componentes visuales de Bootstrap
 import {
   Container,
   ListGroup,
@@ -13,25 +11,19 @@ import {
   Button as BsButton
 } from 'react-bootstrap';
 
-// Botón personalizado reutilizable y un ícono para eliminar
 import Button from "./Button";
 import { FaTrash } from "react-icons/fa";
 
-// Librería para alertas visuales
 import Swal from 'sweetalert2';
 
-// Estilos de Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// Contexto del carrito y de usuario autenticado
 import { useCarrito } from '../context/CarritoContext';
 import { useAuth } from '../context/AuthContext';
 
-// Componente principal del carrito
 function Carrito() {
-  const navigate = useNavigate(); // Para redireccionar entre páginas
+  const navigate = useNavigate();
 
-  // Trae el estado y funciones del carrito
   const {
     carrito,
     eliminarDelCarrito,
@@ -39,15 +31,12 @@ function Carrito() {
     cambiarCantidad
   } = useCarrito();
 
-  // Estado del usuario autenticado
   const { usuario } = useAuth();
 
-  // Calcula el total acumulado de la compra
   const calcularTotal = () => {
     return carrito.reduce((total, item) => total + item.price * item.cantidad, 0).toFixed(2);
   };
 
-  // Confirmación antes de eliminar un producto del carrito
   const confirmarEliminacion = (id) => {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -58,16 +47,14 @@ function Carrito() {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        eliminarDelCarrito(id); // Llama a la función del contexto
+        eliminarDelCarrito(id);
         Swal.fire('Eliminado', 'El producto fue eliminado del carrito.', 'success');
       }
     });
   };
 
-  // Finaliza la compra, descuenta stock y vacía el carrito
   const finalizarCompra = async () => {
     if (!usuario) {
-      // Si no hay sesión iniciada, redirige al login
       Swal.fire({
         title: 'Inicia sesión para continuar',
         text: 'Debes iniciar sesión para finalizar la compra.',
@@ -78,7 +65,7 @@ function Carrito() {
     }
 
     try {
-      // Itera sobre cada producto del carrito y actualiza su stock
+      // El cierre de compra descuenta stock en MockAPI para demostrar el flujo completo.
       for (const item of carrito) {
         const res = await fetch(`https://6846dc797dbda7ee7ab0a12b.mockapi.io/tuhogar/productos/${item.id}`);
         const producto = await res.json();
