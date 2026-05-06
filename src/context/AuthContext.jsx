@@ -2,15 +2,14 @@ import { createContext, useCallback, useContext, useState, useEffect } from "rea
 import { useNavigate } from "react-router-dom";
 
 import usuarios from "../data/usuarios";
+import {
+  buscarUsuarioPorCredenciales,
+  crearSesionSimulada,
+  obtenerRutaPostLogin,
+  sesionEstaVigente,
+} from "../utils/auth";
 
 const AuthContext = createContext();
-
-function generarTokenSimulado() {
-  const parte1 = Math.random().toString(36).substring(2, 8);
-  const parte2 = Date.now().toString(36);
-  const parte3 = Math.random().toString(36).substring(2, 8);
-  return `token-${parte1}-${parte2}-${parte3}`;
-}
 
 export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
@@ -18,22 +17,19 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const login = (username, password) => {
-    const user = usuarios.find(
-      (u) => u.usuario === username && u.password === password
-    );
+    const user = buscarUsuarioPorCredenciales(usuarios, username, password);
 
     if (user) {
-      const token = generarTokenSimulado();
-      const expiracion = Date.now() + 1000 * 60 * 60;
+      const session = crearSesionSimulada(user);
 
       setUsuario(user);
       localStorage.setItem("usuario", JSON.stringify(user));
-      localStorage.setItem("token", token);
-      localStorage.setItem("expiracion", expiracion.toString());
+      localStorage.setItem("token", session.token);
+      localStorage.setItem("expiracion", session.expiracion.toString());
 
-      navigate(user.rol === "admin" ? "/administrador" : "/");
+      navigate(obtenerRutaPostLogin(user));
 
-      return { success: true, user, token };
+      return { success: true, user, token: session.token };
     }
 
     return { success: false, message: "Credenciales inválidas" };
@@ -52,8 +48,7 @@ export const AuthProvider = ({ children }) => {
     const expiracion = localStorage.getItem("expiracion");
 
     if (usuarioGuardado && expiracion) {
-      const exp = parseInt(expiracion, 10);
-      if (Date.now() < exp) {
+      if (sesionEstaVigente(expiracion)) {
         setUsuario(JSON.parse(usuarioGuardado));
       } else {
         logout();

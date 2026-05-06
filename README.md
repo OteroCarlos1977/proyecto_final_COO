@@ -138,10 +138,16 @@ Los tests actuales cubren:
 - Cambio manual de cantidades respetando minimo y maximo.
 - Calculo de total y cantidad acumulada.
 - Eliminacion de productos por id.
+- Validacion de credenciales demo.
+- Creacion de sesion simulada con token y expiracion.
+- Ruta posterior al login segun rol.
+- Vigencia de sesion por timestamp.
 
 ## Autenticacion
 
 La autenticacion es simulada para fines academicos. Los usuarios se validan contra datos locales y el token se guarda en `localStorage` con expiracion de una hora.
+
+La logica pura de autenticacion se encuentra en `src/utils/auth.js` para poder testear credenciales, rutas por rol y expiracion de sesion.
 
 Este enfoque no debe usarse como seguridad real en produccion. Para una version productiva se recomienda backend con sesiones o JWT reales, contrasenas hasheadas y validacion del lado servidor.
 
@@ -150,5 +156,5 @@ Este enfoque no debe usarse como seguridad real en produccion. Para una version 
 - Agregar deploy publico estable.
 - Agregar capturas de pantalla al README.
 - Sustituir MockAPI por backend propio o servicio persistente.
-- Ampliar tests para login y rutas protegidas.
+- Ampliar tests para rutas protegidas.
 - Manejar errores de imagenes externas con placeholders.
