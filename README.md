@@ -90,11 +90,12 @@ npm run preview
 ## Validacion
 
 ```bash
+npm test
 npm run lint
 npm run build
 ```
 
-El lint y el build quedaron validados luego de la limpieza de comentarios y del repaso del carrito funcional.
+Los tests, el lint y el build quedaron validados luego de la limpieza de comentarios y del repaso del carrito funcional.
 
 ## Estructura
 
@@ -111,6 +112,8 @@ src/
 
 El carrito esta implementado en `src/context/CarritoContext.jsx` y se consume desde `src/componentes/Carrito.jsx`.
 
+La logica pura del carrito se encuentra en `src/utils/cart.js` para poder testear reglas de negocio sin depender del renderizado de React.
+
 Incluye:
 
 - Estado global disponible en toda la aplicacion.
@@ -121,6 +124,20 @@ Incluye:
 - Confirmacion antes de eliminar productos.
 - Redireccion a login si el usuario intenta finalizar compra sin iniciar sesion.
 - Actualizacion de stock en MockAPI al completar la compra.
+
+## Tests
+
+```bash
+npm test
+```
+
+Los tests actuales cubren:
+
+- Agregado de producto nuevo.
+- Incremento de cantidad sin superar stock.
+- Cambio manual de cantidades respetando minimo y maximo.
+- Calculo de total y cantidad acumulada.
+- Eliminacion de productos por id.
 
 ## Autenticacion
 
@@ -133,5 +150,5 @@ Este enfoque no debe usarse como seguridad real en produccion. Para una version 
 - Agregar deploy publico estable.
 - Agregar capturas de pantalla al README.
 - Sustituir MockAPI por backend propio o servicio persistente.
-- Agregar tests para carrito, login y rutas protegidas.
+- Ampliar tests para login y rutas protegidas.
 - Manejar errores de imagenes externas con placeholders.
