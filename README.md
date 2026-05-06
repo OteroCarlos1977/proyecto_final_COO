@@ -87,6 +87,15 @@ Para previsualizar el build:
 npm run preview
 ```
 
+## Validacion
+
+```bash
+npm run lint
+npm run build
+```
+
+El lint y el build quedaron validados luego de la limpieza de comentarios y del repaso del carrito funcional.
+
 ## Estructura
 
 ```text
