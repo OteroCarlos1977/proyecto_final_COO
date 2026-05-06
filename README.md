@@ -142,6 +142,7 @@ Los tests actuales cubren:
 - Creacion de sesion simulada con token y expiracion.
 - Ruta posterior al login segun rol.
 - Vigencia de sesion por timestamp.
+- Decisiones de rutas protegidas para carga, login, usuario comun y administrador.
 
 ## Autenticacion
 
@@ -156,5 +157,5 @@ Este enfoque no debe usarse como seguridad real en produccion. Para una version 
 - Agregar deploy publico estable.
 - Agregar capturas de pantalla al README.
 - Sustituir MockAPI por backend propio o servicio persistente.
-- Ampliar tests para rutas protegidas.
+- Agregar tests de renderizado con React Testing Library si se necesitan validar componentes completos.
 - Manejar errores de imagenes externas con placeholders.

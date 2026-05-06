@@ -1,17 +1,15 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { evaluarRutaProtegida } from "../utils/routes";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-    const { usuario, esAdministrador, cargandoUsuario } = useAuth();
+    const { usuario, cargandoUsuario } = useAuth();
+    const decision = evaluarRutaProtegida({ usuario, adminOnly, cargandoUsuario });
 
-    if (cargandoUsuario) return null;
+    if (decision.action === "loading") return null;
 
-    if (!usuario) {
-        return <Navigate to="/login" replace />;
-    }
-
-    if (adminOnly && !esAdministrador()) {
-        return <Navigate to="/" replace />;
+    if (decision.action === "redirect") {
+        return <Navigate to={decision.to} replace />;
     }
 
     return children;
