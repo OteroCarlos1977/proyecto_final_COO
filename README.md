@@ -151,11 +151,3 @@ La autenticacion es simulada para fines academicos. Los usuarios se validan cont
 La logica pura de autenticacion se encuentra en `src/utils/auth.js` para poder testear credenciales, rutas por rol y expiracion de sesion.
 
 Este enfoque no debe usarse como seguridad real en produccion. Para una version productiva se recomienda backend con sesiones o JWT reales, contrasenas hasheadas y validacion del lado servidor.
-
-## Mejoras Recomendadas
-
-- Agregar deploy publico estable.
-- Agregar capturas de pantalla al README.
-- Sustituir MockAPI por backend propio o servicio persistente.
-- Agregar tests de renderizado con React Testing Library si se necesitan validar componentes completos.
-- Manejar errores de imagenes externas con placeholders.
