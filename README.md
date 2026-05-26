@@ -87,6 +87,21 @@ Para previsualizar el build:
 npm run preview
 ```
 
+## Deploy En Netlify
+
+El repositorio incluye `netlify.toml` para publicar la app como SPA con React Router.
+
+Configuracion en Netlify:
+
+```text
+Build command: npm run build
+Publish directory: dist
+```
+
+El redirect `/* -> /index.html` evita errores 404 al recargar rutas internas como `/login`, `/carrito`, `/perfil`, `/administrador` o `/producto/:id`.
+
+La aplicacion consume productos desde MockAPI. Por ese motivo, la demo debe considerarse academica y no productiva: las operaciones de administracion y cierre de compra modifican datos externos de prueba.
+
 ## Validacion
 
 ```bash

@@ -30,6 +30,21 @@ body {
   min-height: 100vh;
 }
 
+.developer-badge {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  display: inline-grid;
+  place-items: center;
+  margin-right: 0.35rem;
+  color: #111827;
+  background: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 900;
+  vertical-align: middle;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
